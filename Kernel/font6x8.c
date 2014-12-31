@@ -28,7 +28,9 @@
 
 #include <config.h>
 
-#ifdef CONFIG_FONT6X8
+#if defined (CONFIG_FONT6X8) || defined (CONFIG_FONT6X8_RIGHTSHIFTED)
+
+#ifdef CONFIG_FONT6X8_RIGHTSHIFTED
 
 #define ______ 0x00
 #define _____O 0x01
@@ -62,6 +64,43 @@
 #define _OOO_O 0x1d
 #define _OOOO_ 0x1e
 #define _OOOOO 0x1f
+
+#else
+
+#define ______ 0b00000000
+#define _____O 0b00000100 
+#define ____O_ 0b00001000 
+#define ____OO 0b00001100
+#define ___O__ 0b00010000 
+#define ___O_O 0b00010100
+#define ___OO_ 0b00011000
+#define ___OOO 0b00011100
+#define __O___ 0b00100000 
+#define __O__O 0b00100100
+#define __O_O_ 0b00101000
+#define __O_OO 0b00101100
+#define __OO__ 0b00110000
+#define __OO_O 0b00110100
+#define __OOO_ 0b00111000
+#define __OOOO 0b00111100
+#define _O____ 0b01000000 
+#define _O___O 0b01000100
+#define _O__O_ 0b01001000
+#define _O__OO 0b01001100
+#define _O_O__ 0b01010000
+#define _O_O_O 0b01010100
+#define _O_OO_ 0b01011000
+#define _O_OOO 0b01011100
+#define _OO___ 0b01100000
+#define _OO__O 0b01100100
+#define _OO_O_ 0b01101000
+#define _OO_OO 0b01101100
+#define _OOO__ 0b01110000
+#define _OOO_O 0b01110100
+#define _OOOO_ 0b01111000
+#define _OOOOO 0b01111100 
+
+#endif
 
 const unsigned char fontdata_6x8[96][8] = {
     [0x00] = {______,
