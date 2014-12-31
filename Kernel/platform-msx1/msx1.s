@@ -44,11 +44,13 @@
 	    ; stuff to save
 	    .globl _vdpport
 	    .globl _infobits
+	    .globl _fontdata_6x8
 
 	    ;
 	    ; vdp - we must initialize this bit early for the vt
 	    ;
 	    .globl vdpinit
+	    .globl loadfont
 
             .include "kernel.def"
             .include "../kernel.def"
@@ -117,7 +119,7 @@ init_hardware:
 
 	    ; Program the video engine
 	    call vdpinit
-
+		call loadfont
 	    ld a, #'I'
 	    out (0x2F), a
 

@@ -21,6 +21,7 @@
 VDP_DIRECT	.equ	1
 
 	    .include "../dev/vdp1.s"
+		.area _COMMONMEM	    
 ;
 ;	FIXME: should use vdpport, but right now vdpport is in data not
 ;	common space.

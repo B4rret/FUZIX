@@ -11,8 +11,9 @@
 	    .globl cursorpos
 
 	    .globl _vdpport
-
+		.globl _fontdata_6x8
 	    .globl vdpinit
+	    .globl loadfont
 	    .globl platform_interrupt_all
 
 	    .area _CODE
@@ -40,7 +41,21 @@ vdpout:	    ld bc, (_vdpport)
 	    out (c), e			; Write the data
 	    out (c), d			; and then the register | 0x80
 	    ret
-
+loadfont:	ld bc, (_vdpport)
+		ld hl, #_fontdata_6x8
+		ld de, #0x4900
+		out (c), e
+		out (c), d
+		dec c
+		ld a, #8
+		ld b, a
+loadfont1:
+		push bc
+		ld b, #96
+		otir
+		pop bc
+		djnz loadfont1
+		ret
 ;
 ;	FIXME: need to IRQ protect the pairs of writes
 ;

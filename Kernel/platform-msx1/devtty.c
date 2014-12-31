@@ -60,8 +60,8 @@ void tty_setup(uint8_t minor)
 }
 
 
-#if 0
-static uint8_t keymap[10];
+#if 1
+/* static */ uint8_t keymap[10];
 static uint8_t keyin[10];
 static uint8_t keybyte, keybit;
 static uint8_t newkey;

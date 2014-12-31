@@ -32,6 +32,8 @@
 	        .globl l__DISCARD
 	        .globl s__COMMONMEM
 	        .globl l__COMMONMEM
+	        .globl s__FONT
+	        .globl l__FONT	        
 		.globl s__INITIALIZER
 	        .globl kstack_top
 
@@ -62,6 +64,10 @@ start:		di
 		ld hl, #s__INITIALIZER
 		ld de, #s__COMMONMEM
 		ld bc, #l__COMMONMEM
+		ldir		
+		; move the font data where it belongs
+		ld de, #s__FONT
+		ld bc, #l__FONT
 		ldir
 		; move the discard area where it belongs
 		ld de, #s__DISCARD

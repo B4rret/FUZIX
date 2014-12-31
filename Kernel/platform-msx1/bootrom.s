@@ -64,10 +64,10 @@ wtfami:		di
 		or c			; and 0x4000
 		ld (0xffff), a		; Select the subslot of the cartridge
 
-		ld a, #3
-		out (0xFC), a		; Begin mapping RAM
 		ld a, #'1'
 		out (0x2f), a
+		ld a, #3
+		out (0xFC), a		; Begin mapping RAM		
 		exx
 		ld hl, #0x4000		; Cartridge 0x4000 -> RAM 0
 		ld de, #0x0
