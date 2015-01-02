@@ -170,6 +170,7 @@ struct hd_geometry {
 #define F_PIPE  010000
 #define F_BDEV  060000  // important that F_BDEV & F_CDEV != 0 (see isdevice() function)
 #define F_CDEV  020000
+#define F_SOCK	0140000
 
 #define F_MASK  0170000
 
@@ -673,7 +674,16 @@ CODE2 void exec_or_die(void);
 CODE2 extern void seladdwait(struct selmap *s);
 CODE2 extern void selrmwait(struct selmap *s);
 CODE2 extern void selwake(struct selmap *s);
+#ifdef CONFIG_SELECT
+CODE2 extern int selwait_inode(inoptr i, uint8_t smask, uint8_t setit);
+CODE2 extern void selwake_inode(inoptr i, uint16_t mask);
+CODE2 extern void selwake_pipe(inoptr i, uint16_t mask);
 CODE2 extern int _select(void);
+#else
+#define selwait_inode(i,smask,setit) do {} while(0)
+#define selwake_inode(i,smask,setit) do {} while(0)
+#define selwake_pipe(i,smask,setit) do {} while(0)
+#endif
 
 /* swap.c */
 extern ptptr swapproc;

@@ -13,7 +13,7 @@ UNAME_S := $(shell uname -s)
 
 ifneq (,$(filter $(CPU),z80 z180)) # matches CPU = z80 or z180
 export CROSS_AS=sdasz80
-export CROSS_LD=sdldz80
+export CROSS_LD=tools/bankld/sdldz80
 export CROSS_CC=sdcc
 #export CROSS_CCOPTS=-c --std-sdcc99 --no-std-crt0 -mz80 -I$(ROOT_DIR)/cpu-z80 -I$(ROOT_DIR)/platform-$(TARGET) -I$(ROOT_DIR)/include --max-allocs-per-node 1000000 --opt-code-size --Werror --stack-auto --constseg CONST
 #export CROSS_CCOPTS=-c --std-sdcc99 --no-std-crt0 -mz80 -I$(ROOT_DIR)/cpu-z80 -I$(ROOT_DIR)/platform-$(TARGET) -I$(ROOT_DIR)/include --max-allocs-per-node 200000 --opt-code-size --Werror --stack-auto --constseg CONST
@@ -29,10 +29,14 @@ export BINEXT = .rel
 #	Adjust this as needed for your platform (or contribute a script
 #	to look in the usual places !)
 #
-ifeq ($(UNAME_S),Darwin)
-export LIBZ80=/usr/local/share/sdcc/lib/$(CPU)
+ifeq ($(SDCC_LIB), "")
+  ifeq ($(UNAME_S),Darwin)
+    export LIBZ80=/usr/local/share/sdcc/lib/$(CPU)
+  else
+    export LIBZ80=/usr/share/sdcc/lib/$(CPU)
+  endif
 else
-export LIBZ80=/usr/share/sdcc/lib/$(CPU)
+  export LIBZ80=$(SDCC_LIB)/$(CPU)
 endif
 else ifeq ($(CPU),6502)
 export CROSS_AS=ca65
@@ -142,6 +146,10 @@ version.c: makeversion
 
 tools/analysemap: tools/analysemap.c
 
+tools/bihx: tools/bihx.c
+
+tools/binmunge: tools/binmunge.c
+
 tools/memhogs: tools/analysemap
 	cp tools/analysemap tools/memhogs
 
@@ -158,22 +166,24 @@ tools/decbdragon: tools/decbdragon.c
 
 tools/bintomdv: tools/bintomdv.c
 
+tools/bankld/sdldz80:
+	(cd tools/bankld; make)
+
 cpm-loader/cpmload.bin:	cpm-loader/cpmload.s cpm-loader/makecpmloader.c
 	+make -C cpm-loader
 
 tools/makejv3: tools/makejv3.c
 
 ifneq (,$(filter $(CPU),z80 z180)) # matches CPU = z80 or z180
-uzi.ihx: target $(OBJS) platform-$(TARGET)/uzi.lnk
-	$(CROSS_LD) -n -k $(LIBZ80) -f platform-$(TARGET)/uzi.lnk
+fuzix.ihx: target $(OBJS) platform-$(TARGET)/fuzix.lnk tools/bankld/sdldz80
+	$(CROSS_LD) -n -k $(LIBZ80) -f platform-$(TARGET)/fuzix.lnk
 
-fuzix.bin: uzi.ihx tools/analysemap tools/memhogs tools/binman tools/bintomdv cpm-loader/cpmload.bin
-	tools/analysemap <uzi.map
+fuzix.bin: fuzix.ihx tools/analysemap tools/memhogs tools/binman tools/bintomdv cpm-loader/cpmload.bin
 	-cp hogs.txt hogs.txt.old
-	tools/memhogs <uzi.map |sort -nr >hogs.txt
+	tools/memhogs <fuzix.map |sort -nr >hogs.txt
 	head -5 hogs.txt
-	makebin -s 65536 -p uzi.ihx >uzi.tmp
-	tools/binman uzi.tmp uzi.map fuzix.bin
+	tools/bihx fuzix.ihx
+	tools/binprep
 	+make -C platform-$(TARGET) image
 else
 fuzix.bin: target $(OBJS) tools/decbdragon
@@ -181,9 +191,10 @@ fuzix.bin: target $(OBJS) tools/decbdragon
 endif
 
 clean:
-	rm -f $(OBJS) $(JUNK) uzi.cdb uzi.com uzi.tmp platform fuzix.bin uzi.map uzi.noi uzi.ihx core *~ include/*~ version.c tools/make4x6 tools/analysemap tools/memhogs tools/binman hogs.txt hogs.txt.old tools/*~
+	rm -f $(OBJS) $(JUNK) fuzix.cdb fuzix.com fuzix.tmp platform fuzix.bin fuzix.map fuzix.noi fuzix.ihx core *~ include/*~ version.c tools/make4x6 tools/analysemap tools/memhogs tools/binman hogs.txt hogs.txt.old tools/*~
 	+make -C platform-$(TARGET) clean
 	+make -C cpm-loader clean
 
 clean-all: clean
+	(cd tools/bankld; make clean)
 	$(foreach target,$(TARGET_LIST), make -C $(target) clean;)

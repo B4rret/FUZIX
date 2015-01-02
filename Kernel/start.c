@@ -41,6 +41,14 @@ void bufinit(void)
 	}
 }
 
+void fstabinit(void)
+{
+	struct mount *mp;
+
+	for (mp = fs_tab; mp < fs_tab + NMOUNTS; ++mp) {
+		mp->m_dev = NO_DEVICE;
+	}
+}
 
 void create_init(void)
 {
@@ -134,11 +142,10 @@ void fuzix_main(void)
 	/* Parameters message */
 	kprintf("%dkB total RAM, %dkB available to processes (%d processes max)\n", ramsize, procmem, maxproc);
 	bufinit();
+	fstabinit();
 	pagemap_init();
 
 	create_init();
-        kprintf("%x:%x, %x:%x\n", udata.u_page, udata.u_page2,
-                udata.u_ptab->p_page, udata.u_ptab->p_page2);
 	kputs("Enabling interrupts ... ");
         ei();
 	kputs("ok.\n");
