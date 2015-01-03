@@ -29,7 +29,7 @@ SRC_C += popen.c printf.c putenv.c putgetch.c putpwent.c pwent.c qsort.c
 SRC_C += raise.c rand.c readdir.c readlink.c realloc.c regerror.c
 SRC_C += regsub.c remove.c rewind.c rindex.c setbuffer.c setenv.c setjmp.c
 SRC_C += setvbuf.c settimeofday.c sleep.c sprintf.c stat.c stdio0.c
-SRC_C += strcasecmp.c strdup.c stricmp.c strlcpy.c strncasecmp.c
+SRC_C += strcasecmp.c strcasestr.c strdup.c stricmp.c strlcpy.c strncasecmp.c
 SRC_C += strnicmp.c strsep.c
 SRC_C += strtod.c strtol.c system.c time.c tmpnam.c ttyname.c
 SRC_C += tzset.c ungetc.c utent.c utimes.c utsname.c
@@ -72,6 +72,7 @@ syslib.lib: syscall.l libc.l sdccz80.lib
 	cp sdccz80.lib syslib.lib
 	$(AR) rc syslib.lib @syslib.l
 	$(AR) s syslib.lib
+	ln -sf syslib.lib c.lib
 
 fuzix/syslib.l:
 	../tools/syscall
