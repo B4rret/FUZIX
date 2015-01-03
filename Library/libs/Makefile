@@ -12,11 +12,12 @@ SRC_CRT0 = crt0.s
 OBJ_CRT0 = $(SRC_CRT0:.s=.rel)
 SRC_ASM =
 OBJ_ASM = $(SRC_ASM:.s=.rel)
-SRC_C =  abort.c asctime.c assert.c atexit.c
+SRC_C =  __argv.c abort.c asctime.c assert.c atexit.c
 SRC_C += bcmp.c bcopy.c bsearch.c bzero.c calloc.c cfree.c clock.c closedir.c
 SRC_C += clock_gettime.c clock_getres.c clock_settime.c
-SRC_C += creat.c crypt.c ctime.c ctype.c difftime.c errno.c error.c execl.c execv.c
-SRC_C += execvp.c exit.c fclose.c fflush.c fgetc.c fgetgrent.c fgetpwent.c
+SRC_C += creat.c crypt.c ctime.c ctype.c difftime.c err.c errno.c error.c
+SRC_C += execl.c execv.c execvp.c exit.c
+SRC_C += fclose.c fflush.c fgetc.c fgetgrent.c fgetpwent.c
 SRC_C += fgetpos.c fgets.c fopen.c fprintf.c fputc.c fputs.c fread.c free.c
 SRC_C += fsetpos.c ftell.c fwrite.c getcwd.c
 SRC_C += getenv.c __getgrent.c getgrgid.c getgrnam.c getopt.c
@@ -28,10 +29,10 @@ SRC_C += popen.c printf.c putenv.c putgetch.c putpwent.c pwent.c qsort.c
 SRC_C += raise.c rand.c readdir.c readlink.c realloc.c regerror.c
 SRC_C += regsub.c remove.c rewind.c rindex.c setbuffer.c setenv.c setjmp.c
 SRC_C += setvbuf.c settimeofday.c sleep.c sprintf.c stat.c stdio0.c
-SRC_C += strcasecmp.c strdup.c stricmp.c strncasecmp.c
+SRC_C += strcasecmp.c strdup.c stricmp.c strlcpy.c strncasecmp.c
 SRC_C += strnicmp.c strsep.c
 SRC_C += strtod.c strtol.c system.c time.c tmpnam.c ttyname.c
-SRC_C += tzset.c ungetc.c utent.c utsname.c
+SRC_C += tzset.c ungetc.c utent.c utimes.c utsname.c
 SRC_C += vfprintf.c vprintf.c wait.c xitoa.c pathconf.c
 SRC_C += gethostname.c sysconf.c confstr.c memccpy.c getpass.c
 # tty layer

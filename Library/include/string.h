@@ -49,6 +49,11 @@ extern char *strtok __P ((char *, const char *));
 extern size_t strcspn __P ((const char *, const char *));
 extern size_t strspn __P ((const char *, const char *));
 
+extern size_t strlcpy __P((char *, const char *, size_t));
+extern size_t strlcat __P((char *, const char *, size_t));
+
+extern char *strcasestr __P((const char *, const char *));
+
 #ifdef	z80
 #pagma inline(memcpy)
 #pagma inline(memset)
