@@ -3,6 +3,7 @@
 #include <kdata.h>
 #include <printf.h>
 #include <tty.h>
+#include <keycode.h>
 
 #define BAD_ROOT_DEV 0xFFFF
 
