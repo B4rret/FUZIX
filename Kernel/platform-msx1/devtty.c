@@ -61,13 +61,13 @@ void tty_setup(uint8_t minor)
 
 
 #if 1
-/* static */ uint8_t keymap[10];
-static uint8_t keyin[10];
+uint8_t keymap[11];
+static uint8_t keyin[11];
 static uint8_t keybyte, keybit;
 static uint8_t newkey;
 static int keysdown = 0;
-static uint8_t shiftmask[10] = {
-	3, 3, 2, 0, 0, 0, 0, 0x10, 0, 0
+static uint8_t shiftmask[11] = {
+	0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0
 };
 
 static void keyproc(void)
@@ -99,30 +99,32 @@ static void keyproc(void)
 	}
 }
 
-uint8_t keyboard[10][8] = {
-	{0, 0, 0, 10, '?' /*left */ , 0, 0, 0},
-	{0, '5', 0, 0, ' ', 27, 0, 0},
-	{0, 0, 0, 0, '\t', '1', 0, 0},
-	{'d', 's', 0, 'e', 'w', 'q', '2', '3'},
-	{'f', 'r', 0, 'a', 'x', 'z', 0, '4'},
-	{'c', 'g', 'y', 't', 'v', 'b', 0, 0},
-	{'n', 'h', '/', '#', '?' /*right */ , 127, '?' /*down */ , '6'},
-	{'k', 'm', 'u', 0, '?' /*up */ , '\\', '7', '='},
-	{',', 'j', 'i', '\'', '[', ']', '-', '8'},
-	{'.', 'o', 'l', ';', 'p', 8, '9', '0'}
+uint8_t keyboard[11][8] = {
+	{'0','1','2', '3','4','5','6','7'},
+	{'8','9','-','=','\\','[',']',';'},
+	{ 0,  0, ',', '.','/',' ','a','b'},
+	{'c','d','e', 'f','g','h','i','j'},
+	{'k','l','m', 'n','o','p','q','r'},
+	{'s','t','u', 'v','w','x','y','z'},
+	{ 0 , 0 , 0 ,  0 , 0 , 0 , 0 , 0 }, /* f3 f2 f1 code caps graph ctrl shift */
+	{ 0 , 0, 27 , '\t',24 ,8 , 0 , 13}, /* ret select bs stop tab esc f5 f4 */
+	{32 ,12,  0 , 127, 0 , 0 , 0 , 0 }, /* right down up left del ins home space */
+	{'*','+','/','0','1' ,'2','3','4'}, /* numeric keyboard */
+	{'5','6','7','8','9' ,'-',',','.'}
 };
 
-uint8_t shiftkeyboard[10][8] = {
-	{0, 0, 0, 10, '?' /*left */ , 0, 0, 0},
-	{0, '%', 0, 0, ' ', 3, 0, 0},
-	{0, 0, 0, 0, '\t', '!', 0, 0},
-	{'D', 'S', 0, 'E', 'W', 'Q', '"', '?' /* pound */ },
-	{'F', 'R', 0, 'A', 'X', 'Z', 0, '$'},
-	{'C', 'G', 'Y', 'T', 'V', 'B', 0, 0},
-	{'N', 'H', '?', '~', '?' /*right */ , 127, '?' /*down */ , '^'},
-	{'K', 'M', 'U', 0, '?' /*up */ , '|', '&', '+'},
-	{'<', 'J', 'I', '@', '{', '}', '_', '*'},
-	{'>', 'O', 'L', ':', 'P', 8, '(', ')'}
+uint8_t shiftkeyboard[11][8] = {
+	{')','!','@', '#','$','%','^','&'},
+	{'*','(','_','+','|','{','}',':'},
+	{'"','~','<','>','?',' ','A','B'},
+	{'C','D','E', 'F','G','H','I','J'},
+	{'K','L','M', 'N','O','P','Q','R'},
+	{'S','T','U', 'V','W','X','Y','Z'},
+	{ 0 , 0 , 0 ,  0 , 0 , 0 , 0 , 0 }, /* f3 f2 f1 code caps graph ctrl shift */
+	{ 0 , 0, 27 , '\t',24 ,8 , 0 , 13}, /* ret select bs stop tab esc f5 f4 */
+	{32 ,12,  0 , 127, 0 , 0 , 0 , 0 }, /* right down up left del ins home space */
+	{'*','+','/','0','1' ,'2','3','4'}, /* numeric keyboard */
+	{'5','6','7','8','9' ,'-',',','.'}
 };
 
 static uint8_t capslock = 0;
