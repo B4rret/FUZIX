@@ -40,5 +40,6 @@ void map_init(void)
 
 void platform_interrupt(void)
 {
+	kbd_interrupt();
 	timer_interrupt();
 }
