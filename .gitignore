@@ -91,4 +91,7 @@ Kernel/tools/bankld/lksym.o
 Kernel/tools/bankld/sdld.o
 Kernel/tools/bankld/sdldz80
 Kernel/tools/bihx
+Library/tools/binman
+Library/tools/fcc
+Library/tools/syscall
 
