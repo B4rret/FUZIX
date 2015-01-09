@@ -174,7 +174,8 @@ static int sd_send_command(uint8_t drive, unsigned char cmd, uint32_t arg)
 /* in the DISCARD segment. sdcc only allows us to specify one segment for   */
 /* each source file. This "solution" is a bit (well, very) hacky ...        */
 /****************************************************************************/
-static void DISCARDSEG(void) __naked { __asm .area _DISCARD __endasm; }
+
+DISCARDABLE
 
 void devsd_init(void)
 {
@@ -186,6 +187,7 @@ void devsd_init(void)
 
 static void sd_init_drive(uint8_t drive)
 {
+    blkdev_t *blk;
     uint32_t sector_count;
 
     kprintf("SD drive %d: ", drive);
@@ -202,8 +204,13 @@ static void sd_init_drive(uint8_t drive)
         kputs("weird card\n");
         return;
     }
-
-    blkdev_add(devsd_transfer_sector, drive, sector_count);
+    blk = blkdev_alloc();
+    if (blk) {
+        blk->transfer = devsd_transfer_sector;
+        blk->drive_number = drive;
+        blk->drive_lba_count = sector_count;
+        blkdev_scan(blk, 0);
+    }
 }
 
 static int sd_spi_init(uint8_t drive)

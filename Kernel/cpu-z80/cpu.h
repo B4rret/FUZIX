@@ -42,7 +42,7 @@ typedef struct {
 
 typedef union {            /* this structure is endian dependent */
     clock_t  full;         /* 32-bit count of ticks since boot */
-    union {
+    struct {
       uint16_t low;         /* 16-bit count of ticks since boot */
       uint16_t high;
     } h;
@@ -58,4 +58,5 @@ typedef union {            /* this structure is endian dependent */
 #define cpu_to_le16(x)	(x)
 #define le16_to_cpu(x)	(x)
 
+#define DISCARDABLE 	static void DISCARDSEG(void) __naked { __asm .area _DISCARD __endasm; }
 #endif

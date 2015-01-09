@@ -4,7 +4,14 @@
 #include <unistd.h>
 
 unsigned int code_len, code2_len, data_len, bss_len, init_len, gsfinal, common_addr,
-  initial;
+  initial, discard_base, discard_len;
+
+static int is_discard(int addr)
+{
+  if (addr < discard_base || addr >= discard_base + discard_len)
+    return 0;
+  return 1;
+}
 
 int main(int argc, char *argv[])
 {
@@ -14,9 +21,13 @@ int main(int argc, char *argv[])
   char name[100];
   char nname[100];
   int hogs = 0;
+  int all = 0;
   
   if (strstr(argv[0], "memhog"))
     hogs = 1;
+  if (argv[1] && strcmp(argv[1], "-a") == 0)
+    all = 1;
+
   
   while(fgets(buf, 511, stdin)) {
     char *p1 = strtok(buf," \t\n");
@@ -41,18 +52,22 @@ int main(int argc, char *argv[])
       sscanf(p1, "%x", &bss_len);
     if (strcmp(p2, "l__INITIALIZED") == 0)
       sscanf(p1, "%x", &init_len);
+    if (strcmp(p2, "l__DISCARD") == 0)
+      sscanf(p1, "%x", &discard_len);
     if (strcmp(p2, "s__GSFINAL") == 0)
       sscanf(p1, "%x", &gsfinal);
     if (strcmp(p2, "s__INITIALIZER") == 0)
       sscanf(p1, "%x", &initial);
     if (strcmp(p2, "s__COMMONMEM") == 0)
       sscanf(p1, "%x", &common_addr);
+    if (strcmp(p2, "s__DISCARD") == 0)
+      sscanf(p1, "%x", &discard_base);
       
     if (hogs && match == 0) {
       if (strstr(p2, "_start")) {
         sscanf(p1, "%x", &naddr);
         strcpy(nname, p2);
-        if (addr) {
+        if (addr && (all || !is_discard(addr)) ) {
           name[strlen(name)-6]=0;
           printf("%d: %s\n", naddr-addr, name);
         }
