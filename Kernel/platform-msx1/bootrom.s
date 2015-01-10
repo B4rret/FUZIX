@@ -49,6 +49,7 @@ wtfami:		di
 		rlca
 		rlca
 		or b			; Pages 3-1 = Cartridge, Page 0 = RAM
+		ld e, a			; Save in E
 		out (0xA8), a		; Map cartridge
 
 ; Select the subslot of the cartridge in pages 3, 2, 1
@@ -63,37 +64,51 @@ wtfami:		di
 		rlca			; to 0xC000/8000
 		or c			; and 0x4000
 		ld (0xffff), a		; Select the subslot of the cartridge
-
+; Old code used mapped ram to copy the code to ram... Not sure if
+; this is the better way to copy the code from rom to ram without 
+; mapped ram...
 		ld a, #'1'
 		out (0x2f), a
-		ld a, #3
-		out (0xFC), a		; Begin mapping RAM		
+		ld a, e
 		exx
 		ld hl, #0x4000		; Cartridge 0x4000 -> RAM 0
 		ld de, #0x0
 		ld bc, #0x4000
 		ldir
-		dec a
-		out (0xFC), a
-		ld de, #0		; 0x8000 -> RAM 0x4000
+		rlca
+		rlca
+		rlca
+		rlca			; Pages 3, 1, 0 -> Cartridge. Page 2 Ram
+		out (0xA8), a 
+		ld hl, #0xC000		; Cartridge 0xC000 -> RAM 0x8000
+		ld de, #0x8000
 		ld bc, #0x4000
 		ldir
-		dec a
-		out (0xFC), a
-		ld de, #0		; 0xC000 -> RAM 0x8000
+		rlca
+		rlca			; Pages 2, 1, 0 -> Cartridge. Page 3 Ram
+		out (0xA8), a
+		ld hl, #0x4000 + copypage2to1
+		ld de, #0xC000
+		ld bc, #endramgo - copypage2to1
+		ldir			; Copy routine to transfer cartridge page 2, to ram page 3		
+		and #0xF3
+		ld e, a
+		and #0xC0
+		rlca
+		rlca
+		rlca
+		rlca
+		or e			; Pages 2, 0 -> Cartridge. Page 3, 1 Ram
+		jp 0xC000		; Routine to transfer cartridge page 2, to ram page 3 and start
+copypage2to1:
+		out (0xA8), a
+		ld hl, #0x8000		; Cartridge 0xC000 -> RAM 0x8000
+		ld de, #0x4000
 		ld bc, #0x4000
-		ldir
-		exx	
-		ld a, #3		; put the maps right
-		out (0xFC), a
-		ld a, #2
-		out (0xFD), a
-		ld a, #1
-		out (0xFE), a
-		xor a
-		out (0xFF), a
+		ldir			
 		ld a, #'G'
 		out (0x2f), a
+		exx
 		ld a, d
 		and #0xC0		; RAM in 0xC000 slot bits
 		ld e, a			
@@ -115,16 +130,17 @@ wtfami:		di
 		out (0xA8), a
 		ld a, #'O'
 		out (0x2f), a
+		jp ramgo
 		;
 		;	We now have RAM where we need it
 		;
-		jp ramgo
-ramgo:		ld a, #'!'
+ramgo:		
+		ld a, #'!'
 		out (0x2f), a
 		ld a, e
 		out (0xA8), a		; Now go all ram
 		jp 0x100
-
+endramgo:
 		; Put start at 0x100 so we can boot the MSXDOS .com too
 		; Hack
-		.ds 0x49
+		.ds 0x36
